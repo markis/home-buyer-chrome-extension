@@ -1,0 +1,54 @@
+{
+  "name": "Home Buyer",
+  "version": "0.0.0.1",
+  "description": "Find home information on the web site you are looking at",
+  "icons": { 
+    "128": "images/icon.png" 
+  },
+  "background": { 
+    "scripts": [ 
+      "lib/jquery.min.js", 
+      "modules/spreadsheetProvider.js", 
+      "background.js" 
+    ] 
+  },
+  "content_scripts": [
+  	{ 
+      "matches": [ 
+        "<all_urls>" 
+      ], 
+      "js": [ 
+        "lib/require.min.js",
+        "lib/require.chromeshim.js",
+        "content.js" 
+      ], 
+      "css": [ 
+        "css/content.css" 
+      ] 
+    }
+  ],
+  "web_accessible_resources": [
+    "images/*",
+    "*.js",
+    "lib/*.js",
+    "content/*.js",
+    "background/*.js"
+  ],
+  "permissions": [
+  	"tabs",
+  	"identity", 
+  	"https://accounts.google.com/*", 
+  	"https://www.googleapis.com/*", 
+  	"https://spreadsheets.google.com/*"
+  ],
+  "oauth2": {
+  	"client_id": "596729039871-1l68n71ncc31il5u3173cmp14btf17f7.apps.googleusercontent.com",
+  	"scopes": [
+      "https://www.googleapis.com/auth/drive", 
+      "https://www.googleapis.com/auth/userinfo.profile", 
+      "https://spreadsheets.google.com/feeds/"
+    ]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgRME2Nc4nkjGeHWbzY1mRyH7I2CaslKCpqPk20DiU5aLw66q0xTZaaqwO730sUlSgv65gZUOl3VNmd2NDi0+NjoO8K8sl3DwAnTWOJzOI3FlV2erR/YVnqYl+qv0+bu5S0U2cYUT6smnkw72nvx8LJjGTnwKa2B8J8Iij2ABdyGlzpm/OeCXoOib7wArXm39BxDmIzxpniv0Anw8RbiKuhinQSmVP4JNXcUkMqa2OXdTba7qL+Z8M/mGuUprLStubvTYu93eG0HfxOnZ2yabXgkMNIcqtiU4Rcwo3CfjhnbSjtNpfJR16zP7RUEfwNJt0p28TZO8xtHfbIxUwtgxmQIDAQAB",
+  "manifest_version": 2
+}
