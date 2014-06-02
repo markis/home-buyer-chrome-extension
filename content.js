@@ -23,7 +23,7 @@ require.config({
   }
 });
 
-require( ['jquery', 'Views/AppView'], function($, AppView) {
+require( ['jquery', 'views/AppView'], function($, AppView) {
   'use strict';
 
   var appView = new AppView();

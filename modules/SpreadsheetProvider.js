@@ -13,7 +13,7 @@
 
 // See http://www.gnu.org/licenses/
 
-var SpreadsheetProvider = (function($) {
+define(['jquery'], function($) {
   'use strict';
 
   var SPREADSHEETS_FEED_URL = 'https://spreadsheets.google.com/feeds/spreadsheets/private/full';
@@ -144,4 +144,4 @@ var SpreadsheetProvider = (function($) {
 
   return SpreadsheetProvider;
 
-})(jQuery);
+});

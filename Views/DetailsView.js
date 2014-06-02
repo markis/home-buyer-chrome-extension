@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // See http://www.gnu.org/licenses/
-define(['backbone', 'Models/Property'], function(Backbone, Property) {
+define(['backbone', 'models/Property'], function(Backbone, Property) {
 	var DetailsView = Backbone.View.extend({
 		id: 'home-buyer-extension-details-panel',
 		render: function() {

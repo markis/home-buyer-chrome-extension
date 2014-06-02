@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // See http://www.gnu.org/licenses/
-define(['backbone', 'Models/Property', 'Views/SlideOutButtonView', 'Views/SaveButtonView', 'Views/DetailsView'], function(Backbone, Property, SlideOutButtonView, SaveButtonView, DetailsView) {
+define(['backbone', 'models/Property', 'views/SlideOutButtonView', 'views/SaveButtonView', 'views/DetailsView'], function(Backbone, Property, SlideOutButtonView, SaveButtonView, DetailsView) {
 	var AppView = Backbone.View.extend({
 		id: 'home-buyer-extension',
 		initialize: function() {

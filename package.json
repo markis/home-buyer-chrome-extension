@@ -1,0 +1,11 @@
+{
+  "description": "Find home information on the web site you are looking at",
+  "author": "Markis Taylor <m@rkis.cc>",
+  "devDependencies": {
+    "grunt-contrib-requirejs": "~0.4.4",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-cssmin": "~0.9.0"
+  }
+}

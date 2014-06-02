@@ -6,9 +6,7 @@
     "128": "images/icon.png" 
   },
   "background": { 
-    "scripts": [ 
-      "lib/require.min.js",
-      "lib/require.chromeshim.js",
+    "scripts": [
       "background.js" 
     ] 
   },
@@ -17,19 +15,13 @@
       "matches": [ 
         "<all_urls>" 
       ], 
-      "js": [ 
-        "lib/require.min.js",
-        "lib/require.chromeshim.js",
+      "js": [
         "content.js" 
       ], 
       "css": [ 
         "css/content.css" 
       ] 
     }
-  ],
-  "web_accessible_resources": [
-    "images/*",
-    "*.js"
   ],
   "permissions": [
   	"tabs",

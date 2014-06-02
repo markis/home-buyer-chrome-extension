@@ -13,7 +13,16 @@
 
 // See http://www.gnu.org/licenses/
 
-(function(chrome, SpreadsheetProvider) {
+require.config({
+  baseUrl: '/',
+  paths: {
+    'backbone': '/lib/backbone.min',
+    'jquery': '/lib/jquery.min',
+    'underscore': '/lib/underscore.min'
+  }
+});
+
+require( ['modules/SpreadsheetProvider'], function(SpreadsheetProvider){
   chrome.extension.onMessage.addListener(function(msg, sender, sendResponse) {
     if (msg.action == 'saveProperty') {
       var spreadsheetProvider = new SpreadsheetProvider();
@@ -25,10 +34,24 @@
       return true;
     }
   });
+});
 
-  // chrome.tabs.onUpdated.addListener(function(tabId, change, tab) {
-  //   if (change.status == 'complete') {
-  //     chrome.tabs.sendRequest(tabId, {});
-  //   }
-  // });
-})(chrome, SpreadsheetProvider);
+// (function(chrome, SpreadsheetProvider) {
+//   chrome.extension.onMessage.addListener(function(msg, sender, sendResponse) {
+//     if (msg.action == 'saveProperty') {
+//       var spreadsheetProvider = new SpreadsheetProvider();
+//       spreadsheetProvider.save(msg.spreadSheetName, msg.property, function(data) {
+//         sendResponse();
+//       }, function(e) {
+//         sendResponse(e);
+//       });
+//       return true;
+//     }
+//   });
+
+//   // chrome.tabs.onUpdated.addListener(function(tabId, change, tab) {
+//   //   if (change.status == 'complete') {
+//   //     chrome.tabs.sendRequest(tabId, {});
+//   //   }
+//   // });
+// })(chrome, SpreadsheetProvider);

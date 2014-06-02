@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // See http://www.gnu.org/licenses/
-define(['backbone', 'Modules/Parser', 'Models/PropertyValue'], function(Backbone, Parser, PropertyValue) {
+define(['backbone', 'modules/Parser', 'models/PropertyValue'], function(Backbone, Parser, PropertyValue) {
 
 	var Property = Backbone.Collection.extend({
 
