@@ -1,14 +1,12 @@
 {
   "name": "Home Buyer",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "description": "Find home information on the web site you are looking at",
   "icons": { 
     "128": "images/icon.png" 
   },
   "background": { 
-    "scripts": [ 
-      "lib/require.min.js",
-      "lib/require.chromeshim.js",
+    "scripts": [
       "background.js" 
     ] 
   },
@@ -17,19 +15,13 @@
       "matches": [ 
         "<all_urls>" 
       ], 
-      "js": [ 
-        "lib/require.min.js",
-        "lib/require.chromeshim.js",
+      "js": [
         "content.js" 
       ], 
       "css": [ 
         "css/content.css" 
       ] 
     }
-  ],
-  "web_accessible_resources": [
-    "images/*",
-    "*.js"
   ],
   "permissions": [
   	"tabs",
@@ -46,6 +38,5 @@
       "https://spreadsheets.google.com/feeds/"
     ]
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgRME2Nc4nkjGeHWbzY1mRyH7I2CaslKCpqPk20DiU5aLw66q0xTZaaqwO730sUlSgv65gZUOl3VNmd2NDi0+NjoO8K8sl3DwAnTWOJzOI3FlV2erR/YVnqYl+qv0+bu5S0U2cYUT6smnkw72nvx8LJjGTnwKa2B8J8Iij2ABdyGlzpm/OeCXoOib7wArXm39BxDmIzxpniv0Anw8RbiKuhinQSmVP4JNXcUkMqa2OXdTba7qL+Z8M/mGuUprLStubvTYu93eG0HfxOnZ2yabXgkMNIcqtiU4Rcwo3CfjhnbSjtNpfJR16zP7RUEfwNJt0p28TZO8xtHfbIxUwtgxmQIDAQAB",
   "manifest_version": 2
 }

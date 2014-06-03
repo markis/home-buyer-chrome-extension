@@ -5,8 +5,8 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          baseUrl: './',
-          dir: './extension',
+          baseUrl: './app',
+          dir: './build',
           optimizeCss: 'none',
           optimize: 'none',
           keepBuildDir: true,
@@ -31,28 +31,29 @@ module.exports = function(grunt) {
     },
     copy: {
       main: {
-        src: 'extension/manifest.release.json',
-        dest: 'extension/manifest.json'
+        src: 'build/manifest.release.json',
+        dest: 'build/manifest.json'
       },
     },
     clean: [
-      'extension/extension', 
-      'extension/lib', 
-      'extension/models', 
-      'extension/modules', 
-      'extension/node_modules', 
-      'extension/views',  
-      'extension/build.js',  
-      'extension/build.txt',
-      'extension/Gruntfile.js',  
-      'extension/manifest.release.json', 
-      'extension/package.json', 
-      'extension/settings.js'
+      'build/build', 
+      'build/lib', 
+      'build/models', 
+      'build/modules', 
+      'build/node_modules', 
+      'build/views',  
+      'build/.gitignore', 
+      'build/build.js',  
+      'build/build.txt',
+      'build/Gruntfile.js',  
+      'build/manifest.release.json', 
+      'build/package.json', 
+      'build/settings.js'
     ],
     cssmin: {
       extension_files: {
         files: {
-          'extension/css/content.css': 'extension/css/content.css'
+          'build/css/content.css': 'build/css/content.css'
         }
       }
     },
@@ -68,18 +69,32 @@ module.exports = function(grunt) {
       },
       extension_files: {
         files: {
-          'extension/background.js': 'extension/background.js',
-          'extension/content.js': 'extension/content.js',
+          'build/background.js': 'build/background.js',
+          'build/content.js': 'build/content.js',
         },
       },
+    },
+    compress: {
+      main: {
+        options: {
+          archive: function () {
+            // The global value git.tag is set by another task
+            return 'chrome-extension.zip'
+          }
+        },
+        files: [
+          {expand: true, src: ['build/*'], dest: '/'}
+        ]
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['requirejs', 'copy', 'clean', 'uglify', 'cssmin']);
+  grunt.registerTask('default', ['requirejs', 'copy', 'clean', 'uglify', 'cssmin', 'compress']);
 };

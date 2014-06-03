@@ -1,12 +1,14 @@
 {
   "name": "Home Buyer",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "description": "Find home information on the web site you are looking at",
   "icons": { 
     "128": "images/icon.png" 
   },
   "background": { 
-    "scripts": [
+    "scripts": [ 
+      "lib/require.min.js",
+      "lib/require.chromeshim.js",
       "background.js" 
     ] 
   },
@@ -15,13 +17,19 @@
       "matches": [ 
         "<all_urls>" 
       ], 
-      "js": [
+      "js": [ 
+        "lib/require.min.js",
+        "lib/require.chromeshim.js",
         "content.js" 
       ], 
       "css": [ 
         "css/content.css" 
       ] 
     }
+  ],
+  "web_accessible_resources": [
+    "images/*",
+    "*.js"
   ],
   "permissions": [
   	"tabs",
