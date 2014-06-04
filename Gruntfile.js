@@ -65,6 +65,9 @@ module.exports = function(grunt) {
         }
       }
     },
+    jshint: {
+      all: ['Gruntfile.js', 'app/**/*.js', '!app/lib/*.js', 'test/**/*.js']
+    },
     uglify: {
       options: {
         banner: '/*! Home Buyer - Chrome Extension - Copyright (C) <%= grunt.template.today("yyyy") %>  Markis Taylor - See http://www.gnu.org/licenses/ */\n',
@@ -87,7 +90,7 @@ module.exports = function(grunt) {
         options: {
           archive: function () {
             // The global value git.tag is set by another task
-            return 'chrome-extension.zip'
+            return 'chrome-extension.zip';
           }
         },
         files: [
@@ -101,9 +104,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('default', ['mochaTest', 'requirejs', 'copy', 'clean', 'uglify', 'cssmin', 'compress']);
+  grunt.registerTask('default', ['jshint', 'mochaTest', 'requirejs', 'copy', 'clean', 'uglify', 'cssmin', 'compress']);
 };

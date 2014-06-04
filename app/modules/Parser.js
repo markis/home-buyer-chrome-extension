@@ -69,7 +69,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			propertyValue = this.getValueFromRegex(/(\d+\s+['|:.,\s\w]*,\s*[A-Za-z]+[,\s]*\d{5}(-\d{4})?)/m);
 		}
 		return propertyValue;
-	}
+	};
 
 	Internals.prototype.getPostalAddress = function getPostalAddress() {
 		var self = this;
@@ -87,7 +87,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		});
 		return {value:value, element:element};
-	}
+	};
 
 	Internals.prototype.getPlace = function getPlace() {
 		var self = this;
@@ -116,7 +116,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		});
 		
 		return {value:value, element:element};
-	}
+	};
 
 	Internals.prototype.getNumberValueFromDocument = function getNumberValueFromDocument(setting) {
 		if (!setting) return;
@@ -133,7 +133,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			propertyValue.value = propertyValue.value.replace(/\s{2,}/g, ' ').trim();
 		}
 		return propertyValue;
-	}
+	};
 
 	Internals.prototype.processMetaLocations = function processMetaLocations(metaLocations) {
 		var self = this;
@@ -155,7 +155,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		}
 		return null;
-	}
+	};
 
 	Internals.prototype.processFunctions = function processFunctions(functions) {
 		var self = this;
@@ -173,7 +173,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		}
 		return null;
-	}
+	};
 
 	Internals.prototype.processRegexes = function processRegexes(regexes) {
 		var value, element, propertyValue;
@@ -187,17 +187,17 @@ define(['jquery', 'settings'], function($, globalSettings) {
 					if ('string' === typeof(propertyValue.value)) {
 						propertyValue.value = propertyValue.value.replace(regex, '');
 					}
-					return propertyValue
+					return propertyValue;
 				}
 			}
 		}
 		return null;
-	}
+	};
 
 	Internals.prototype.getValueFromRegex = function getValueFromRegex(regex) {
 		var elems = this.getElementsByRegex(regex);
 		return this.getValueFromElement(regex, elems);
-	}
+	};
 
 	Internals.prototype.getValueFromElement = function getValueFromElement(regex, $elems) {
 		var self = this;
@@ -211,7 +211,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			element = $elems[0];
 		}
 		return { value: value, element: element };
-	}
+	};
 
 	Internals.prototype.getElementsByRegex = function getElementsByRegex(regex) {
 		var self = this;
@@ -236,7 +236,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		});
 
 		return elements;
-	}
+	};
 
 	Internals.prototype.isElementVisible = function isElementVisible($elem, checkParents) {
 		var self = this;
@@ -254,10 +254,10 @@ define(['jquery', 'settings'], function($, globalSettings) {
 				if (!isElementVisible($elem)) {
 					return false;
 				}
-			};
+			}
 		}
 		return true;
-	}
+	};
 
 	Internals.prototype.isElementParentToAnotherElementInList = function isElementParentToAnotherElementInList(element, elements) {
 		var self = this;
@@ -269,7 +269,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		}
 		return false;
-	}
+	};
 
 	Internals.prototype.getNumberFromSurroundingElements = function getNumberFromSurroundingElements(element) {
 		var self = this;
@@ -302,7 +302,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		});
 		return { value: num, element: element };
-	}
+	};
 
 	Internals.prototype.getNumberFromElement = function getNumberFromElement(element) {
 		var self = this;
@@ -317,7 +317,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			}
 		}
 		return value;
-	}
+	};
 
 	return Parser;
 });

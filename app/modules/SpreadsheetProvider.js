@@ -48,19 +48,19 @@ define(['jquery'], function($) {
   			self.postPropertyToWorksheet(listfeedurl, property, callback, failureCallback);
   		}, failureCallback);
   	}, failureCallback);
-  }
+  };
 
   function Internals() {}
 
   Internals.prototype.consoleFailureCallback = function consoleFailureCallback(e) {
   	console.error(e);
-  }
+  };
 
   Internals.prototype.getToken = function getToken(interactive, callback, failureCallback) {
   	try {
   		chrome.identity.getAuthToken({ 'interactive': interactive }, callback);
   	} catch(e) { failureCallback(e); }
-  }
+  };
 
   Internals.prototype.getWorkSheetUrl = function getWorkSheetUrl(spreadsheetName, callback, failureCallback) {
 	if (!spreadsheetName) failureCallback('spreadsheetName is undefined');
@@ -71,7 +71,7 @@ define(['jquery'], function($) {
 			callback(worksheetsfeedUrl);
   		} catch(e) { failureCallback(e); }
   	}, failureCallback);
-  }
+  };
 
   Internals.prototype.getWorkSheetListFeedUrl = function getWorkSheetListFeedUrl(worksheetsfeedUrl, callback, failureCallback) {
   	if (!worksheetsfeedUrl) failureCallback('worksheetsfeedUrl is undefined');
@@ -82,7 +82,7 @@ define(['jquery'], function($) {
 			callback(listfeedurl);
   		} catch(e) { failureCallback(e); }
   	}, failureCallback);
-  }
+  };
 
   Internals.prototype.postPropertyToWorksheet = function postPropertyToWorksheet(listfeedurl, property, callback, failureCallback) {
   	if (!listfeedurl) failureCallback('listfeedurl is undefined');
@@ -95,20 +95,20 @@ define(['jquery'], function($) {
 		for (var i = 0; i < keys.length; i++) {
 			var key = keys[i];
 			postData.push('<gsx:' + key + '>' + escapeXml(property[key]) + '</gsx:' + key + '>');
-		};
+		}
 		postData.push('</entry>');
 
 		self.callGoogleApi(listfeedurl, postData.join(''), callback, failureCallback);
   	} catch(e) { failureCallback(e); }
-  }
+  };
 
   Internals.prototype.callGoogleApi = function callGoogleApi(url, postData, successCallback, failureCallback){
   	if ('function' === typeof postData) {
-  		failureCallback = successCallback
+  		failureCallback = successCallback;
   		successCallback = postData;
   		postData = undefined;
   	}
-  	if (!failureCallback) failureCallback = consoleFailureCallback
+  	if (!failureCallback) failureCallback = consoleFailureCallback;
   	var self = this;
    	try	{
 
@@ -131,7 +131,7 @@ define(['jquery'], function($) {
 							console.error(error);
 						}
 					}
-		  		}
+        };
 			if (postData) {
 				ajaxSettings.type = 'POST';
 				ajaxSettings.data = postData;
@@ -140,7 +140,7 @@ define(['jquery'], function($) {
 			$.ajax(url, ajaxSettings);
 	  	}, failureCallback);
 	 } catch(e) { failureCallback(e); }
-  }
+  };
 
   return SpreadsheetProvider;
 
