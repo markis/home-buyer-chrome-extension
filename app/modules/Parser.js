@@ -23,10 +23,11 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th'
 	];
 
-	function Parser(settings, container) {
-		container = container || window.document;
+	function Parser(jQuery, settings, container) {
+		this.container = container || window.document;
+		this.$ = jQuery || $;
 		this.settings = settings || globalSettings.parser;
-		this.internals = new Internals(this.settings, container);
+		this.internals = new Internals(this.$, this.settings, this.container);
 	}
 	Parser.prototype.getProperty = function getProperty() {
 		var self = this.internals;
@@ -35,7 +36,9 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		if (address.value)
 		{
 			property = {};
-			property.url = {value: document.location.href, element: document.location};
+			if (this.container && this.container.location) {
+				property.url = {value: this.container.location.href, element: this.container.location};
+			}
 			property.address = address;
 			if (self.settings) {			
 				for (var i = 0; i < self.settings.properties.length; i++) {
@@ -49,10 +52,10 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		return property;
 	};
 
-	function Internals(settings, container) {
+	function Internals(jQuery, settings, container) {
+		this.$ = jQuery;
 		this.settings = settings;
 		this.container = container;
-
 		this.functions = settings.functions || {};
 	}
 
@@ -69,10 +72,11 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.getPostalAddress = function getPostalAddress() {
+		var self = this;
 		var value, element;
 		var addresses = [];
-		$('[itemtype="http://schema.org/PostalAddress"]', this.container).each(function(idx, elem) { 
-			var addresses = $(elem).parent().items('http://schema.org/PostalAddress').values().filter(function(address) { 
+		self.$('[itemtype="http://schema.org/PostalAddress"]', this.container).each(function(idx, elem) { 
+			var addresses = self.$(elem).parent().items('http://schema.org/PostalAddress').values().filter(function(address) { 
 				return address.streetAddress && address.addressLocality && address.addressRegion && address.postalCode;
 			});
 
@@ -86,10 +90,11 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.getPlace = function getPlace() {
+		var self = this;
 		var value, element;
 		var addresses = [];
-		$('[itemtype="http://schema.org/Place"]', this.container).each(function(idx, elem) { 
-			var addresses = $(elem).parent().items('http://schema.org/Place').values().map(function(place) {
+		self.$('[itemtype="http://schema.org/Place"]', this.container).each(function(idx, elem) { 
+			var addresses = self.$(elem).parent().items('http://schema.org/Place').values().map(function(place) {
 				var address = null;
 				if (place.address) {
 					address = place.address;
@@ -131,11 +136,12 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.processMetaLocations = function processMetaLocations(metaLocations) {
+		var self = this;
 		var value, element;
 		if (metaLocations && metaLocations.length > 0) {
 			for (var i = 0; i < metaLocations.length; i++) {
 				var metaLocation = metaLocations[i];
-				var metaTag = $(metaLocation, this.container);
+				var metaTag = self.$(metaLocation, this.container);
 				if (metaTag && metaTag.length > 0) {
 					element = metaTag[0];
 					value = metaTag.attr('content');
@@ -152,13 +158,14 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.processFunctions = function processFunctions(functions) {
+		var self = this;
 		var value, element, propertyValue;
 		if (functions && functions.length > 0) {
 			for (var i = 0; i < functions.length; i++) {
 				var funcName = functions[i];
 				var func = this.functions[funcName];
 				if (func) {
-					propertyValue = func($, this.container);
+					propertyValue = func(self.$, this.container);
 					if (propertyValue && propertyValue.value) {
 						return propertyValue;
 					}
@@ -177,6 +184,9 @@ define(['jquery', 'settings'], function($, globalSettings) {
 				propertyValue = this.getNumberFromSurroundingElements(elements);
 
 				if (propertyValue) {
+					if ('string' === typeof(propertyValue.value)) {
+						propertyValue.value = propertyValue.value.replace(regex, '');
+					}
 					return propertyValue
 				}
 			}
@@ -190,9 +200,10 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.getValueFromElement = function getValueFromElement(regex, $elems) {
+		var self = this;
 		var value, element;
 		if ($elems && $elems.length > 0) {
-			var text = $($elems[0]).text();
+			var text = self.$($elems[0]).text();
 			var matches = regex.exec(text);
 			text = matches[0];
 			var trim = /\s{2,}/g;
@@ -204,10 +215,10 @@ define(['jquery', 'settings'], function($, globalSettings) {
 
 	Internals.prototype.getElementsByRegex = function getElementsByRegex(regex) {
 		var self = this;
-		var elements = $(VALID_TAGS.join(', '), this.container);
+		var elements = self.$(VALID_TAGS.join(', '), this.container);
 
 		elements = elements.filter(function(idx, elem) { 
-			var $elem = $(elem);
+			var $elem = self.$(elem);
 			return self.isElementVisible($elem, false) && $elem.text().length < 1000 && regex.test($elem.text()) ; 
 		});
 
@@ -216,18 +227,19 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		});
 
 		elements = elements.filter(function(idx, elem) {
-			var $elem = $(elem);
+			var $elem = self.$(elem);
 			return self.isElementVisible($elem, true);
 		});
 
 		elements.sort(function(elem, elem2) { 
-			return $(elem).offset().top > $(elem2).offset().top ? 1 : -1;
+			return self.$(elem).offset().top > self.$(elem2).offset().top ? 1 : -1;
 		});
 
 		return elements;
 	}
 
 	Internals.prototype.isElementVisible = function isElementVisible($elem, checkParents) {
+		var self = this;
 		var offset = $elem.offset();
 		if (offset.top < 0 || offset.left < 0) {
 			return false;
@@ -238,7 +250,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		if (checkParents) {
 			var parents = $elem.parents();
 			for (var i = 0; i < parents.length; i++) {
-				$elem = $(parents[i]);
+				$elem = self.$(parents[i]);
 				if (!isElementVisible($elem)) {
 					return false;
 				}
@@ -248,8 +260,9 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.isElementParentToAnotherElementInList = function isElementParentToAnotherElementInList(element, elements) {
+		var self = this;
 		for (var i = elements.length - 1; i >= 0; i--) {
-			var parents = $(elements[i]).parents();
+			var parents = self.$(elements[i]).parents();
 			for (var j = parents.length - 1; j >= 0; j--) {
 				if (element === parents[j])
 					return true;
@@ -265,9 +278,9 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			element = elem;
 			num = self.getNumberFromElement(elem);
 			if(!num) {
-				var elemOffset = $(elem).offset();
-				$(elem).parent().contents().filter(function(idx, contentElem) {
-					var contentElemOffset = $(contentElem).offset();
+				var elemOffset = self.$(elem).offset();
+				self.$(elem).parent().contents().filter(function(idx, contentElem) {
+					var contentElemOffset = self.$(contentElem).offset();
 					return contentElemOffset.left === elemOffset.left || contentElemOffset.top === elemOffset.top;
 				}).each(function(idx, contentElem) {
 					element = contentElem;
@@ -276,12 +289,12 @@ define(['jquery', 'settings'], function($, globalSettings) {
 				});
 
 				if(!num) {
-					element = $(elem).parent()[0];
+					element = self.$(elem).parent()[0];
 					num = self.getNumberFromElement(element);
 				}
 
 				if (num) {
-					num = $(element).text();
+					num = self.$(element).text();
 				}
 			}
 			if (num) {
@@ -292,9 +305,10 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	}
 
 	Internals.prototype.getNumberFromElement = function getNumberFromElement(element) {
+		var self = this;
 		var value = null;
 		if (element) {
-			var text = $(element).text();
+			var text = self.$(element).text();
 			var regex = /[\d\.,]+/m;
 			var match = regex.exec(text);
 			if (match && match.length) {

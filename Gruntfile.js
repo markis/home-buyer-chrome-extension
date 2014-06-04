@@ -2,6 +2,14 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/**/*.js']
+      }
+    },
     requirejs: {
       compile: {
         options: {
@@ -95,6 +103,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('default', ['requirejs', 'copy', 'clean', 'uglify', 'cssmin', 'compress']);
+  grunt.registerTask('default', ['mochaTest', 'requirejs', 'copy', 'clean', 'uglify', 'cssmin', 'compress']);
 };

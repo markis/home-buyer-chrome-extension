@@ -1,4 +1,4 @@
-define(['jquery'], function($) {
+define(function() {
 	return {
 		parser: {
 			properties: [
@@ -14,7 +14,7 @@ define(['jquery'], function($) {
 					type: 'number', 
 					metaLocations: [ 'meta[name$="beds"]', 'meta[property$="beds"]' ], 
 					functions: null, 
-					regexes: [ /\bbedroom|beds|bed|bd\b/i ]
+					regexes: [ /\bbedroom|beds|bed|bd|br\b/i ]
 				}, 
 				{
 					name: 'bath',
@@ -26,7 +26,7 @@ define(['jquery'], function($) {
 				{
 					name: 'sqft',
 					type: 'number', 
-					metaLocations: [ 'meta[name$="sqft"]', 'meta[property$="sqft"]' ], 
+					metaLocations: [ 'meta[name$="sqft"]', 'meta[property$="sqft"]', 'meta[property$="square_feet"]' ], 
 					functions: null, 
 					regexes: [ /\b(sq|square)[\s\.]*?(footage|ft|feet)\b/i ]
 				}
