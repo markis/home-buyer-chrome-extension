@@ -43,11 +43,11 @@ define(['jquery'], function($) {
   	if (!property) failureCallback('property is undefined');
   	var self = this.internals;
 
-	self.getWorkSheetUrl(spreadSheetName, function(worksheetsfeedUrl) {
-		self.getWorkSheetListFeedUrl(worksheetsfeedUrl, function(listfeedurl) {
-			self.postPropertyToWorksheet(listfeedurl, property, callback, failureCallback);
-		}, failureCallback);
-	}, failureCallback);
+  	self.getWorkSheetUrl(spreadSheetName, function(worksheetsfeedUrl) {
+  		self.getWorkSheetListFeedUrl(worksheetsfeedUrl, function(listfeedurl) {
+  			self.postPropertyToWorksheet(listfeedurl, property, callback, failureCallback);
+  		}, failureCallback);
+  	}, failureCallback);
   }
 
   function Internals() {}
@@ -112,7 +112,7 @@ define(['jquery'], function($) {
   	var self = this;
    	try	{
 
-	  	self.getToken(false, function(token) {
+	  	self.getToken(true, function(token) {
 	  		var ajaxSettings = {
 		  			cache: false,
 		  			dataType: 'xml',

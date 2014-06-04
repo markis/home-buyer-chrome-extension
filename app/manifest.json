@@ -1,6 +1,6 @@
 {
   "name": "Home Buyer",
-  "version": "0.0.0.3",
+  "version": "0.0.0.4",
   "description": "Find home information on the web site you are looking at",
   "icons": { 
     "128": "images/icon.png" 
