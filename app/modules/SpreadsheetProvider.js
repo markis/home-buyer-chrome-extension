@@ -16,9 +16,11 @@
 define(['jquery'], function($) {
   'use strict';
 
+  var DRIVE_URL = 'https://www.googleapis.com/drive/v2/files?key=AIzaSyD-ytzTZk3pth5_d2Ip1B00PXJv_nS3nCA';
   var SPREADSHEETS_FEED_URL = 'https://spreadsheets.google.com/feeds/spreadsheets/private/full';
   var WORKSHEETS_NAMESPACE = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
   var LISTFEED_NAMESPACE = 'http://schemas.google.com/spreadsheets/2006#listfeed';
+  var CELLSFEED_NAMESPACE = 'http://schemas.google.com/spreadsheets/2006#cellsfeed';
 
   var XML_CHAR_MAP = {
     '<': '&lt;',
@@ -50,6 +52,45 @@ define(['jquery'], function($) {
   	}, failureCallback);
   };
 
+  SpreadsheetProvider.prototype.setupAccount = function setupAccount(callback, failureCallback) {
+    var self = this.internals;
+    self.getToken(true, callback, failureCallback);
+  };
+
+  SpreadsheetProvider.prototype.createHomeBuyerSpreadsheet = function createHomeBuyerSpreadsheet(spreadSheetName, callback, failureCallback) {
+    if (!spreadSheetName) failureCallback('spreadSheetName is undefined');
+    var self = this.internals;
+    self.getToken(false, function(token) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://www.googleapis.com/upload/drive/v2/files?convert=true');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        xhr.onreadystatechange=function()
+        {
+            if (xhr.readyState==4 && xhr.status==200) { // && xhr.status==200
+                var data = JSON.parse(xhr.response);
+                var xhr2 = new XMLHttpRequest();
+                xhr2.open('PATCH', 'https://www.googleapis.com/drive/v2/files/' + data.id + '?key=AIzaSyD-ytzTZk3pth5_d2Ip1B00PXJv_nS3nCA');
+                xhr2.setRequestHeader('Authorization', 'Bearer ' + token);
+                xhr2.setRequestHeader('Content-Type', 'application/json');
+                xhr2.onreadystatechange=function()
+                {
+                    if (xhr2.readyState==4 && xhr2.status==200) {
+                        callback();
+                    }
+                };
+                xhr2.send('{title:"Home Buyer",description:"This file was created by the Home Buyer Chrome Extension","properties":[{"key": "HomeBuyer"}]}');
+            }
+        };
+        
+        var blob = new Blob(['url,address,price,bed,bath,sqft'], { type: 'text/csv'});
+        var formData = new FormData();
+        
+        formData.append('HomeBuyerFile', blob);
+        
+        xhr.send(formData);
+    }, failureCallback);
+  };
+
   function Internals() {}
 
   Internals.prototype.consoleFailureCallback = function consoleFailureCallback(e) {
@@ -58,8 +99,24 @@ define(['jquery'], function($) {
 
   Internals.prototype.getToken = function getToken(interactive, callback, failureCallback) {
   	try {
-  		chrome.identity.getAuthToken({ 'interactive': interactive }, callback);
-  	} catch(e) { failureCallback(e); }
+      chrome.identity.getAuthToken({ 'interactive': interactive }, function(token) {
+        if ('undefined' === typeof token) {
+          failureCallback();
+        } else {
+          callback(token);
+        }
+      });
+    } catch(e) { failureCallback(e); }
+  };
+
+  Internals.prototype.setColumnsOnSpreadsheet = function setColumnsOnSpreadsheet(spreadSheetName, callback, failureCallback) {
+    if (!spreadSheetName) failureCallback('spreadSheetName is undefined');
+    var self = this;
+    self.getWorkSheetUrl(spreadSheetName, function(worksheetsfeedUrl) {
+      self.getWorkSheetCellsFeedUrl(worksheetsfeedUrl, function(cellsfeedurl) {
+        
+      }, failureCallback);
+    }, failureCallback);
   };
 
   Internals.prototype.getWorkSheetUrl = function getWorkSheetUrl(spreadsheetName, callback, failureCallback) {
@@ -88,41 +145,42 @@ define(['jquery'], function($) {
   	if (!listfeedurl) failureCallback('listfeedurl is undefined');
   	if (!property) failureCallback('property is undefined');
   	var self = this;
-	try	{
-		var keys = Object.keys(property);
-		var postData = [];
-		postData.push('<entry xmlns="http://www.w3.org/2005/Atom" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended">');
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			postData.push('<gsx:' + key + '>' + escapeXml(property[key]) + '</gsx:' + key + '>');
-		}
-		postData.push('</entry>');
+  	try	{
+  		var keys = Object.keys(property);
+  		var postData = [];
+  		postData.push('<entry xmlns="http://www.w3.org/2005/Atom" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended">');
+  		for (var i = 0; i < keys.length; i++) {
+  			var key = keys[i];
+  			postData.push('<gsx:' + key + '>' + escapeXml(property[key]) + '</gsx:' + key + '>');
+  		}
+  		postData.push('</entry>');
 
-		self.callGoogleApi(listfeedurl, postData.join(''), callback, failureCallback);
+  		self.callGoogleApi(listfeedurl, postData.join(''), callback, failureCallback);
   	} catch(e) { failureCallback(e); }
   };
 
-  Internals.prototype.callGoogleApi = function callGoogleApi(url, postData, successCallback, failureCallback){
+  Internals.prototype.callGoogleApi = function callGoogleApi(url, postData, callback, failureCallback){
   	if ('function' === typeof postData) {
-  		failureCallback = successCallback;
-  		successCallback = postData;
+  		failureCallback = callback;
+  		callback = postData;
   		postData = undefined;
   	}
   	if (!failureCallback) failureCallback = consoleFailureCallback;
   	var self = this;
    	try	{
 
-	  	self.getToken(true, function(token) {
+      var contenttype = 'xml'; //TODO: adjust the call signature to allow this to be passed in
+	  	self.getToken(false, function(token) {
 	  		var ajaxSettings = {
 		  			cache: false,
-		  			dataType: 'xml',
+		  			dataType: contenttype,
 		  			type: 'GET',
 		  			beforeSend: function (xhr)
 					{
 						xhr.setRequestHeader("Authorization", "Bearer " + token);
 					},
 					success: function(data) {
-			  			successCallback($(data));
+			  			callback($(data));
 					},
 					error: function(xhr, status, error) {
 						if (failureCallback) {
@@ -135,7 +193,10 @@ define(['jquery'], function($) {
 			if (postData) {
 				ajaxSettings.type = 'POST';
 				ajaxSettings.data = postData;
-				ajaxSettings.contentType = 'application/atom+xml';
+        if (contenttype === 'xml') {
+          contenttype = 'atom+xml';
+        }
+        ajaxSettings.contentType = 'application/' + contenttype;
 			}
 			$.ajax(url, ajaxSettings);
 	  	}, failureCallback);

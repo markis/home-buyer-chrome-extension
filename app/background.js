@@ -21,7 +21,15 @@ require.config({
     'underscore': '/lib/underscore.min'
   }
 });
-
+chrome.runtime.onInstalled.addListener(function(details){
+  if(details.reason == 'install') {
+      chrome.identity.getAuthToken({ 'interactive': false }, function(token) {
+        if ('undefined' === typeof token) {
+          chrome.tabs.create({url:'html/setup.html'});
+        }
+      });
+  }
+});
 require( ['modules/SpreadsheetProvider'], function(SpreadsheetProvider){
   chrome.extension.onMessage.addListener(function(msg, sender, sendResponse) {
     if (msg.action == 'saveProperty') {

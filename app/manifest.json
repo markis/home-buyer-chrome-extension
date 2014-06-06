@@ -1,7 +1,7 @@
 {
   "name": "Home Buyer",
-  "version": "0.0.0.4",
-  "description": "Find home information on the web site you are looking at",
+  "version": "0.0.0.5",
+  "description": "Home Buyer is the easiest way to save all of your favorite properties in one location.",
   "icons": { 
     "128": "images/icon.png" 
   },
@@ -36,8 +36,10 @@
   	"identity", 
   	"https://accounts.google.com/*", 
   	"https://www.googleapis.com/*", 
-  	"https://spreadsheets.google.com/*"
+  	"https://spreadsheets.google.com/*",
+    "https://apis.google.com/*"
   ],
+  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
   "oauth2": {
   	"client_id": "596729039871-1l68n71ncc31il5u3173cmp14btf17f7.apps.googleusercontent.com",
   	"scopes": [

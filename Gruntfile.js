@@ -20,12 +20,16 @@ module.exports = function(grunt) {
           keepBuildDir: true,
           modules : [
             {
+                name: 'background',
+                include: ['almond', 'background']
+            },
+            {
                 name: 'content',
                 include: ['almond', 'content']
             },
             {
-                name: 'background',
-                include: ['almond', 'background']
+                name: 'setup',
+                include: ['almond', 'setup']
             }
           ],
           paths: {
@@ -82,6 +86,7 @@ module.exports = function(grunt) {
         files: {
           'build/background.js': 'build/background.js',
           'build/content.js': 'build/content.js',
+          'build/setup.js': 'build/setup.js'
         },
       },
     },

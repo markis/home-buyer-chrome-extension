@@ -1,7 +1,7 @@
 {
   "name": "Home Buyer",
-  "version": "0.0.0.4",
-  "description": "Find home information on the web site you are looking at",
+  "version": "0.0.0.5",
+  "description": "Home Buyer is the easiest way to save all of your favorite properties in one location.",
   "icons": { 
     "128": "images/icon.png" 
   },
@@ -22,6 +22,10 @@
         "css/content.css" 
       ] 
     }
+  ],
+  "web_accessible_resources": [
+    "images/*",
+    "*.js"
   ],
   "permissions": [
   	"tabs",
