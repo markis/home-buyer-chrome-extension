@@ -21,7 +21,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'figure', 'figcaption', 'div', 'a', 'em', 'strong', 'small', 's', 'cite', 'q', 'dfn', 'abbr', 'data', 'time',
 		'code', 'var', 'samp', 'kbd', 'sub', 'sup', 'i', 'b', 'u', 'mark', 'ruby', 'rt', 'rp', 'bdi', 'bdo', 'span', 'table', 'caption', 'colgroup',
 		'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th'
-	];
+	];  //valid tags should be all tags that could contain readable content.  It should not be form fields or any type of input field.
 
 	function Parser(jQuery, settings, container) {
 		this.container = container || window.document;
@@ -74,18 +74,19 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	Internals.prototype.getPostalAddress = function getPostalAddress() {
 		var self = this;
 		var value, element;
-		var addresses = [];
-		self.$('[itemtype="http://schema.org/PostalAddress"]', this.container).each(function(idx, elem) { 
-			var addresses = self.$(elem).parent().items('http://schema.org/PostalAddress').values().filter(function(address) { 
-				return address.streetAddress && address.addressLocality && address.addressRegion && address.postalCode;
-			});
+		var elements = self.$('[itemtype="http://schema.org/PostalAddress"]', this.container);
 
-			if (addresses.length > 0) {
-				element = elem;
-				value = addresses[0].streetAddress + ', ' + addresses[0].addressLocality + ', ' + addresses[0].addressRegion + ' ' + addresses[0].postalCode;
-				return false; //exit each loop
+		for (var i = 0; i < elements.length; i++) {
+			var addresses = self.$(elements[i]).parent().items('http://schema.org/PostalAddress').values();
+			for (var j = 0; j < addresses.length; j++) {
+				var address = addresses[j];
+				if (address.streetAddress && address.addressLocality && address.addressRegion && address.postalCode) {
+					element = elements[i];
+					value = address.streetAddress + ', ' + address.addressLocality + ', ' + address.addressRegion + ' ' + address.postalCode;
+					break;
+				}
 			}
-		});
+		}
 		return {value:value, element:element};
 	};
 
@@ -93,27 +94,24 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		var self = this;
 		var value, element;
 		var addresses = [];
-		self.$('[itemtype="http://schema.org/Place"]', this.container).each(function(idx, elem) { 
-			var addresses = self.$(elem).parent().items('http://schema.org/Place').values().map(function(place) {
-				var address = null;
-				if (place.address) {
-					address = place.address;
-					if (place.address && !place.address.streetAddress) {
-						place.address.streetAddress = place.name;
+		var elements = self.$('[itemtype="http://schema.org/Place"]', this.container);
+		for (var i = 0; i < elements.length; i++) {
+			var places = self.$(elements[i]).parent().items('http://schema.org/Place').values();
+			for (var j = 0; j < places.length; j++) {
+				var place = places[j];
+				if (place && place.address) {
+					var address = place.address;
+					if (!address.streetAddress) {
+						address.streetAddress = place.name;
+					}
+					if (address && address.streetAddress && address.addressLocality && address.addressRegion && address.postalCode) {
+						element = elements[i];
+						value = address.streetAddress + ', ' + address.addressLocality + ', ' + address.addressRegion + ' ' + address.postalCode;
+						break;
 					}
 				}
-				return address;
-			}).filter(function(address) {
-				return address && address.streetAddress && address.addressLocality && address.addressRegion && address.postalCode;
-			});
-
-			if (addresses.length > 0) {
-				element = elem;
-				value = addresses[0].streetAddress + ', ' + addresses[0].addressLocality + ', ' + 
-						addresses[0].addressRegion + ' ' + addresses[0].postalCode;
-				return false; //exit each loop
 			}
-		});
+		}
 		
 		return {value:value, element:element};
 	};
@@ -219,7 +217,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 
 		elements = elements.filter(function(idx, elem) { 
 			var $elem = self.$(elem);
-			return self.isElementVisible($elem, false) && $elem.text().length < 1000 && regex.test($elem.text()) ; 
+			return $elem.text().length < 1000 && self.isElementVisible($elem, false) && regex.test($elem.text()) ; 
 		});
 
 		elements = elements.filter(function(idx, elem) {
@@ -241,7 +239,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	Internals.prototype.isElementVisible = function isElementVisible($elem, checkParents) {
 		var self = this;
 		var offset = $elem.offset();
-		if (offset.top < 0 || offset.left < 0) {
+		if (!offset || offset.top < 0 || offset.left < 0) {
 			return false;
 		}
 		if ($elem.css('display') === 'none' || $elem.css('visibility') === 'hidden' || $elem.css('opacity') === '0') {
@@ -271,36 +269,46 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		return false;
 	};
 
-	Internals.prototype.getNumberFromSurroundingElements = function getNumberFromSurroundingElements(element) {
+	Internals.prototype.getNumberFromSurroundingElements = function getNumberFromSurroundingElements(elements) {
 		var self = this;
-		var num;
-		element.each(function(idx, elem) {
-			element = elem;
-			num = self.getNumberFromElement(elem);
+		var num, element;
+		for (var j = 0; j < elements.length; j++) {
+			element = elements[j];
+			num = self.getNumberFromElement(element);
 			if(!num) {
-				var elemOffset = self.$(elem).offset();
-				self.$(elem).parent().contents().filter(function(idx, contentElem) {
-					var contentElemOffset = self.$(contentElem).offset();
-					return contentElemOffset.left === elemOffset.left || contentElemOffset.top === elemOffset.top;
-				}).each(function(idx, contentElem) {
-					element = contentElem;
-					num = self.getNumberFromElement(contentElem);
-					if (num) return false; //break out of each loop
-				});
+				var $elem = self.$(element);
 
+				//first check all surounding content for numbers
+				var elemOffset = $elem.offset();
+				var contentsOfParents = $elem.parent().contents();
+				for (var i = 0; i < contentsOfParents.length; i++) {
+					var contentElem = contentsOfParents[i];
+					var contentElemOffset = self.$(contentElem).offset();
+					if (contentElemOffset.left === elemOffset.left || contentElemOffset.top === elemOffset.top) {
+						element = contentElem;
+						num = self.getNumberFromElement(contentElem);
+						if (num) {
+							break;
+						}
+					}
+				}
+
+				// second check the direct parent
 				if(!num) {
-					element = self.$(elem).parent()[0];
+					element = $elem.parent()[0];
 					num = self.getNumberFromElement(element);
 				}
 
+				// sometimes it's better to get all the text from the contents instead of just the number
+				//  ex: "1 and half baths" vs 1
 				if (num) {
 					num = self.$(element).text();
 				}
 			}
 			if (num) {
-				return false; //break out of each loop
+				break; //break out of each loop
 			}
-		});
+		}
 		return { value: num, element: element };
 	};
 

@@ -93,7 +93,7 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave,, San Francisco, CA 94115');
+					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
 					property.price.value.should.equal('$8,995,000');
 					property.bed.value.should.equal('6');
 					property.bath.value.should.equal('6.5');
