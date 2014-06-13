@@ -21,11 +21,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					property.price.value.should.equal('8995000');
-					property.bed.value.should.equal('6');
-					property.bath.value.should.equal('6.5');
-					property.sqft.value.should.equal('4900');
+					property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					property.price.should.equal('8995000');
+					property.bed.should.equal('6');
+					property.bath.should.equal('6.5');
+					property.sqft.should.equal('4900');
 
 				}
 			});
@@ -39,11 +39,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					property.price.value.should.equal('$8,995,000');
-					property.bed.value.should.equal('6');
-					property.bath.value.should.equal('7');
-					property.sqft.value.should.equal('4900');
+					property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					property.price.should.equal('$8,995,000');
+					property.bed.should.equal('6');
+					property.bath.should.equal('7');
+					property.sqft.should.equal('4900');
 
 				}
 			});
@@ -57,11 +57,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					// property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					// property.price.value.should.equal('8995000');
-					// property.bed.value.should.equal('6');
-					// property.bath.value.should.equal('6');
-					// property.sqft.value.should.equal('4,900');
+					// property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					// property.price.should.equal('8995000');
+					// property.bed.should.equal('6');
+					// property.bath.should.equal('6');
+					// property.sqft.should.equal('4,900');
 
 				}
 			});
@@ -75,11 +75,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					property.price.value.should.equal('$8,995,000');
-					property.bed.value.should.equal('6 Bed');
-					property.bath.value.should.equal('7 Bath');
-					property.sqft.value.should.equal('4900');
+					property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					property.price.should.equal('$8,995,000');
+					property.bed.should.equal('6 Bed');
+					property.bath.should.equal('7 Bath');
+					property.sqft.should.equal('4900');
 
 				}
 			});
@@ -93,11 +93,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					property.price.value.should.equal('$8,995,000');
-					property.bed.value.should.equal('6');
-					property.bath.value.should.equal('6.5');
-					property.sqft.value.should.equal('-');
+					property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					property.price.should.equal('$8,995,000');
+					property.bed.should.equal('6');
+					property.bath.should.equal('6.5');
+					property.sqft.should.equal('-');
 
 				}
 			});
@@ -111,11 +111,11 @@ describe("Parser", function() {
 					var parser = new Parser(window.$, null, window.document);
 					var property = parser.getProperty();
 
-					property.address.value.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
-					property.price.value.should.equal('8995000');
-					property.bed.value.should.equal('6');
-					property.bath.value.should.equal('6');
-					//property.sqft.value.should.equal('4,900');
+					property.address.should.equal('2602 Pacific Ave, San Francisco, CA 94115');
+					property.price.should.equal('8995000');
+					property.bed.should.equal('6');
+					property.bath.should.equal('6');
+					//property.sqft.should.equal('4,900');
 
 				}
 			});

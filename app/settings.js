@@ -14,14 +14,14 @@ define(function() {
 					type: 'number', 
 					metaLocations: [ 'meta[name$="beds"]', 'meta[property$="beds"]' ], 
 					functions: null, 
-					regexes: [ /\bbedroom|beds|bed|bd|br\b/i ]
+					regexes: [ /\bbedrooms|bedroom|beds|bed|bd|br\b/i ]
 				}, 
 				{
 					name: 'bath',
 					type: 'number', 
 					metaLocations: [ 'meta[name$="baths"]', 'meta[property$="baths"]' ], 
 					functions: null, 
-					regexes: [ /\bbathroom|baths|bath|ba\b/i ]
+					regexes: [ /\bbathrooms|bathroom|baths|bath|ba\b/i ]
 				}, 
 				{
 					name: 'sqft',

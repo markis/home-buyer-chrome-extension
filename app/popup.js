@@ -13,7 +13,6 @@
 
 // See http://www.gnu.org/licenses/
 
-
 require.config({
   baseUrl: '/',
   paths: {
@@ -22,25 +21,28 @@ require.config({
     'underscore': '/lib/underscore.min'
   }
 });
+require(['jquery', 'underscore'], function($, _) {
+	var background = chrome.extension.getBackgroundPage();
+	if (background) {
+		background.getSelectedProperty(function(data) {
+			if (data) {
 
-(function() {
-	var property;
-	chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
-		if (property && property.isValid()) {
-			sendResponse(property);
-		} else {
-			require( ['modules/Parser'], function(Parser) {
-				var parser = new Parser();
-				var property = parser.getProperty();
-				sendResponse(property);
-			});
-		}
-	});
-})();
+				$('#export-image').css('background-image', 'url(' + chrome.extension.getURL('/images/arrow.svg') + ')');
+				$('#button-container').click(function() {
+					$('#save-button').text('Saving');
+					var msg = {
+			  			action: 'saveProperty', 
+			  			spreadSheetName: 'Home Buyer',
+			  			property: data
+			  		};
+			  		chrome.extension.sendMessage(null, msg, function(response) { 
+				        $('#save-button').text('Saved!'); 
+				    });
+				});
 
-// require( ['jquery', 'views/AppView'], function($, AppView) {
-//   'use strict';
-
-//   var appView = new AppView();
-//   $('body').prepend(appView.render().el);
-// });
+				var html = _.template($('#property-template').html(), data);
+				$('body').prepend(html);
+			}
+		});
+	}
+});

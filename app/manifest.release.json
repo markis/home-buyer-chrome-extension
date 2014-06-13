@@ -23,6 +23,11 @@
       ] 
     }
   ],
+  "page_action": {
+      "default_name": "Home Buyer",
+      "default_icon": "images/icon.png",
+      "default_popup": "html/popup.html"
+  },
   "web_accessible_resources": [
     "images/*",
     "*.js"

@@ -19,23 +19,27 @@ define(['backbone', 'modules/Parser', 'models/PropertyValue'], function(Backbone
 		fetch: function Property_fetch(options) {
 			var parser = new Parser();
 			var property = parser.getProperty();
+			this.parse(property);
+			return property;
+		},
+		parse: function Property_parse(property) {
 			if (property) {
 				var keys = Object.keys(property);
 				for (var i = 0; i < keys.length; i++) {
 					var key = keys[i];
 					var propertyValue = property[key];
 					propertyValue.id = key;
+					delete propertyValue.element;
 					this.add(new PropertyValue(propertyValue));
 				}
 			}
-			return property;
 		},
 		toJSON: function Property_toJSON() {
 			var data =  {};
 			var values = this.toArray();
 			for (var i = 0; i < values.length; i++) {
 				var propertyValue = values[i];
-				data[propertyValue.id] = propertyValue.get('value');
+				data[propertyValue.id] = propertyValue.getValue();
 			}
 			return data;
 		},

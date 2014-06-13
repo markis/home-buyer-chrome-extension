@@ -23,6 +23,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th'
 	];  //valid tags should be all tags that could contain readable content.  It should not be form fields or any type of input field.
 
+	function Property() {}
 	function Parser(jQuery, settings, container) {
 		this.container = container || window.document;
 		this.$ = jQuery || $;
@@ -33,20 +34,29 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		var self = this.internals;
 		var address = self.getAddress();
 		var property = null;
+		var i;
 		if (address.value)
 		{
-			property = {};
+			property = new Property();
 			if (this.container && this.container.location) {
 				property.url = {value: this.container.location.href, element: this.container.location};
 			}
 			property.address = address;
 			if (self.settings) {			
-				for (var i = 0; i < self.settings.properties.length; i++) {
+				for (i = 0; i < self.settings.properties.length; i++) {
 					var setting = self.settings.properties[i];
 					if (setting.type === 'number') {
 						property[setting.name] = self.getNumberValueFromDocument(setting);
 					}
 				}
+			}
+
+			//TODO: decide to keep the elements in the returned data or not
+			var keys = Object.keys(property);
+			for (i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				var propertyValue = property[key];
+				property[key] = propertyValue.value;
 			}
 		}
 		return property;
@@ -66,7 +76,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			propertyValue = this.getPlace();
 		}
 		if (!propertyValue || !propertyValue.value) {
-			propertyValue = this.getValueFromRegex(/(\d+\s+['|:.,\s\w]*,\s*[A-Za-z]+[,\s]*\d{5}(-\d{4})?)/m);
+			propertyValue = this.getValueFromRegex(/(\d+\s+['|:.,#\s\w]*,\s*[A-Za-z]+[,\s]*\d{5}(-\d{4})?)/m);
 		}
 		return propertyValue;
 	};
@@ -128,6 +138,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 			propertyValue = this.processRegexes(setting.regexes);
 		}
 		if (propertyValue && 'string' === typeof(propertyValue.value)) {
+			propertyValue.value = propertyValue.value.replace(/[:]/i, '');
 			propertyValue.value = propertyValue.value.replace(/\s{2,}/g, ' ').trim();
 		}
 		return propertyValue;
@@ -201,7 +212,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		var self = this;
 		var value, element;
 		if ($elems && $elems.length > 0) {
-			var text = self.$($elems[0]).text();
+			var text = self.$($elems[0]).html().replace(/<(?:.|\n)*?>/gm, ' ');
 			var matches = regex.exec(text);
 			text = matches[0];
 			var trim = /\s{2,}/g;
@@ -214,21 +225,30 @@ define(['jquery', 'settings'], function($, globalSettings) {
 	Internals.prototype.getElementsByRegex = function getElementsByRegex(regex) {
 		var self = this;
 		var elements = self.$(VALID_TAGS.join(', '), this.container);
-
-		elements = elements.filter(function(idx, elem) { 
-			var $elem = self.$(elem);
-			return $elem.text().length < 1000 && self.isElementVisible($elem, false) && regex.test($elem.text()) ; 
-		});
-
-		elements = elements.filter(function(idx, elem) {
-			return !self.isElementParentToAnotherElementInList(elem, elements);
-		});
-
-		elements = elements.filter(function(idx, elem) {
-			var $elem = self.$(elem);
-			return self.isElementVisible($elem, true);
-		});
-
+		var i, $elem;
+		var output = [];
+		for (i = 0; i < elements.length; i++) {
+			$elem = self.$(elements[i]);
+			if ($elem.text().length < 1000 && regex.test($elem.html().replace(/<(?:.|\n)*?>/gm, ' '))) { // && self.isElementVisible($elem, false)
+				output.push(elements[i]);
+			}
+		}
+		elements = output;
+		output = [];
+		for (i = 0; i < elements.length; i++) {
+			if (!self.isElementParentToAnotherElementInList(elements[i], elements)) {
+				output.push(elements[i]);
+			}
+		}
+		elements = output;
+		output = [];
+		for (i = 0; i < elements.length; i++) {
+			$elem = self.$(elements[i]);
+			if (self.isElementVisible($elem, true)) {
+				output.push(elements[i]);
+			}
+		}
+		elements = output;
 		elements.sort(function(elem, elem2) { 
 			return self.$(elem).offset().top > self.$(elem2).offset().top ? 1 : -1;
 		});
@@ -238,6 +258,9 @@ define(['jquery', 'settings'], function($, globalSettings) {
 
 	Internals.prototype.isElementVisible = function isElementVisible($elem, checkParents) {
 		var self = this;
+		if ($elem[0].nodeType === 3) {
+			$elem = $elem.parent();
+		}
 		var offset = $elem.offset();
 		if (!offset || offset.top < 0 || offset.left < 0) {
 			return false;
@@ -302,7 +325,7 @@ define(['jquery', 'settings'], function($, globalSettings) {
 				// sometimes it's better to get all the text from the contents instead of just the number
 				//  ex: "1 and half baths" vs 1
 				if (num) {
-					num = self.$(element).text();
+					num = self.$(element).html().replace(/<(?:.|\n)*?>/gm, ' ');
 				}
 			}
 			if (num) {
@@ -316,12 +339,15 @@ define(['jquery', 'settings'], function($, globalSettings) {
 		var self = this;
 		var value = null;
 		if (element) {
-			var text = self.$(element).text();
+			var text = self.$(element).html().replace(/<(?:.|\n)*?>/gm, ' ');
 			var regex = /[\d\.,]+/m;
 			var match = regex.exec(text);
 			if (match && match.length) {
 				text = match[0];
 				value = text.replace(/,/g, '');
+				if (value.replace(/\./g, '').length < 1) {
+					value = null;
+				}
 			}
 		}
 		return value;

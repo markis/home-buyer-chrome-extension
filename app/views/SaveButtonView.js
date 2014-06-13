@@ -21,7 +21,7 @@ define(['backbone', 'models/Property'], function(Backbone, Property) {
 			'click' : 'saveProperty'
 		},
 		render: function() {
-			this.$el.text('Save to Trulia');
+			this.$el.text('Save to Docs');
 			return this;
 		},
 		saveProperty:  function() {

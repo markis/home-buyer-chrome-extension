@@ -12,11 +12,14 @@
 // GNU General Public License for more details.
 
 // See http://www.gnu.org/licenses/
-define(['backbone', 'models/Property'], function(Backbone, Property) {
+
+define(['jquery', 'underscore', 'backbone', 'models/Property'], function($, _, Backbone, Property) {
 	var DetailsView = Backbone.View.extend({
 		id: 'home-buyer-extension-details-panel',
+		tagName: 'table',
 		render: function() {
-	        
+			var html = _.template($('#artist-list-template').html(), this.model);
+	        this.$el.html(html);
 	        return this;
 	    }
 	});

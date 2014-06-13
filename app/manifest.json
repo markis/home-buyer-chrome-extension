@@ -27,6 +27,11 @@
       ] 
     }
   ],
+  "page_action": {
+      "default_name": "Home Buyer",
+      "default_icon": "images/icon.png",
+      "default_popup": "html/popup.html"
+  },
   "web_accessible_resources": [
     "images/*",
     "*.js"
@@ -39,7 +44,7 @@
   	"https://spreadsheets.google.com/*",
     "https://apis.google.com/*"
   ],
-  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+  "content_security_policy": "script-src 'unsafe-eval'; object-src 'self'",
   "oauth2": {
   	"client_id": "596729039871-1l68n71ncc31il5u3173cmp14btf17f7.apps.googleusercontent.com",
   	"scopes": [

@@ -23,6 +23,7 @@ define(['backbone', 'models/Property', 'views/SlideOutButtonView', 'views/SaveBu
 		},
 		render: function() {
 	        this.$el.empty();
+	        this.$el.hide();
 	        this.model.fetch();
     		if (this.model.isValid()){
     	        this.$el.append(this.slideOutButton.$el);
@@ -30,7 +31,7 @@ define(['backbone', 'models/Property', 'views/SlideOutButtonView', 'views/SaveBu
     	        this.slideOutButton.render();
     	        this.saveButton.render();
     	    } else {
-    	    	this.$el.hide();
+    	    	this.$el.remove();
     	    }
 	        return this;
 	    }
